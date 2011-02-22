@@ -209,7 +209,7 @@
                     <phase>compile</phase>
                     <configuration>
                         <tasks>
-                            <ant antfile="build.xml"/>
+                            <ant/>
                         </tasks>
                     </configuration>
                     <goals>
@@ -270,5 +270,4 @@
             </plugin>
         </plugins>
     </build>
-  
 </project>

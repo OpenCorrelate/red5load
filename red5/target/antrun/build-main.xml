@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="maven-antrun-" default="main"  >
 <target name="main">
-  <echo>in clean phase</echo>
-  <ant target="clean"/>
+  <attachartifact file="red5.jar" classifier="server" type="jar"/>
+  <attachartifact file="boot.jar" classifier="boot" type="jar"/>
 </target>
 </project>
