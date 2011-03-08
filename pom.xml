@@ -82,7 +82,6 @@
 
     <!-- Build config and dependency list courtesy of Antoni Jakubiak
          from his Maven2 + Red5 + Xuggle build system (jakubiak-red5)
-
          http://code.google.com/p/jakubiak-red5/
     -->
     <build>
