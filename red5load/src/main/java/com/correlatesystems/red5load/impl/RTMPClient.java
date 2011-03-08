@@ -1,9 +1,5 @@
 package com.correlatesystems.red5load.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-
 import com.correlatesystems.red5load.BaseClient;
 import com.correlatesystems.red5load.exceptions.InvalidMediaException;
 
@@ -11,13 +7,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.red5.server.api.service.IPendingServiceCall;
-import org.red5.server.cache.NoCacheImpl;
-import org.red5.io.ITagReader;
-import org.red5.io.flv.IFLV;
-import org.red5.io.flv.impl.FLVService;
 import org.red5.io.object.Deserializer;
 import org.red5.io.object.Serializer;
 import org.red5.io.utils.ObjectMap;
+import org.red5.server.net.rtmp.codec.RTMPCodecFactory;
 import org.red5.server.net.rtmp.event.IRTMPEvent;
 import org.red5.server.net.rtmp.event.Notify;
 import org.red5.server.net.rtmp.status.StatusCodes;
@@ -63,6 +56,11 @@ public class RTMPClient
         this.app = app;
         state = ClientState.STOPPED;
         setServiceProvider(this);
+        RTMPCodecFactory codecFactory = new RTMPCodecFactory();
+        codecFactory.setDeserializer(new Deserializer());
+        codecFactory.setSerializer(new Serializer());
+        codecFactory.init();
+        setCodecFactory(codecFactory);
     }
     
     @Override
@@ -72,9 +70,7 @@ public class RTMPClient
 
             ObjectMap<String, String> map = (ObjectMap<String, String>) notify.getCall().getArguments()[0]; 
             String code = map.get("code"); 
-            String description = map.get("description"); 
-            String details = map.get("details"); 
-
+            
 
             if (StatusCodes.NS_PUBLISH_START.equals(code)) { 
                 
@@ -112,7 +108,7 @@ public class RTMPClient
     @Override
     public void resultReceived(IPendingServiceCall call) {
         
-        if ("connect".equals(call.getServiceMethodName())) {
+    	if ("connect".equals(call.getServiceMethodName())) {
             state = ClientState.STREAM_CREATING;
             createStream(this);
         } else if ("createStream".equals(call.getServiceMethodName())) {
@@ -138,44 +134,7 @@ public class RTMPClient
 
 	@Override
 	public void setMedia(String filename) throws InvalidMediaException {
-		FLVService service = new FLVService(); 
-        service.setSerializer(new Serializer()); 
-        service.setDeserializer(new Deserializer()); 
-
-        
-        File f = new File(filename); 
-
-        IFLV flv;
-		try {
-			flv = (IFLV) service.getStreamableFile(f);
-		} catch (IOException e) {
-			String ioMsg = e.getCause().toString();
-			String invalidMediaMsg = String.format(
-					"Unable to generate FLV from given filename: %s",
-					f.getAbsolutePath());
-			log.error(ioMsg);
-			
-			throw new InvalidMediaException(invalidMediaMsg);
-			
-		} 
-		
-        flv.setCache(NoCacheImpl.getInstance()); 
-
-        ITagReader reader;
-		try {
-			reader = flv.getReader();
-		} catch (IOException e) {
-			String ioMsg = e.getCause().toString();
-			String invalidMediaMsg = String.format(
-					"Unable to grab reader for given flv: %s",
-					f.getAbsolutePath());
-			log.error(ioMsg);
-			
-			throw new InvalidMediaException(invalidMediaMsg);
-		} 
-
-        source = new FileStreamSource(reader); 
-		
+		source = MediaStreamingUtils.getFileStreamSource(filename); 
 	}
 
 	@Override
