@@ -97,7 +97,7 @@
             <artifactId>jaudiotagger</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ow2.jonas.osgi</groupId>
+            <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
         </dependency>
         <dependency>
