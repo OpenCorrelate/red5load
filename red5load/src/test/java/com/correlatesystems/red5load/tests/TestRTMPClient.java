@@ -34,7 +34,7 @@ public class TestRTMPClient extends AbstractTestFlashMediaClient {
 
         client = ClientFactory.getClient(
         		RTMPClient.class,
-        		"exeter.local",
+        		"localhost",
         		1935,
         		"oflaDemo");
     }

@@ -30,7 +30,7 @@ public class TestRTMPTClient {
 
         client = ClientFactory.getClient(
         		RTMPTClient.class,
-        		"exeter.local",
+        		"localhost",
         		8088,
         		"oflaDemo");
     }
